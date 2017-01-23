@@ -1,0 +1,12 @@
+#!/bin/bash
+
+mkdir .cache
+cd .cache
+if [ -d zerve ]; then
+    ( cd zerve && git pull )
+else
+    git clone https://github.com/mapio/zerve
+fi
+cd zerve
+./make_zerve ../../src
+cp zerve ../../bin/zv
