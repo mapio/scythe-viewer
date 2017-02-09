@@ -9,4 +9,4 @@ else
 fi
 cd zerve
 ./make_zerve ../../src
-cp zerve ../../bin/zv
+cp zerve ../../release/sv

@@ -69,7 +69,7 @@ function update_case( delta ) {
 	var cur = cases[ current.case ];
 	$case.text( cur.name );
 	var res = [];
-	$.each( [ 'args', 'input', 'output', 'actual', 'errors', 'diffs' ], function( i, e ) {
+	$.each( [ 'args', 'input', 'expected', 'actual', 'errors', 'diffs' ], function( i, e ) {
 		if ( cur[ e ] === null ) return;
 		var lines = cur[ e ].split( '\n' );
 		var content = lines.length > MAX_NUM_LINES ? lines.slice( 0, MAX_NUM_LINES ).join( '\n' ) + '\n<<TRUNCATED>>\n': lines.join( '\n' );
