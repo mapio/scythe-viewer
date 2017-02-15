@@ -205,7 +205,8 @@ function setup_summary() {
 
 	var tbody = $( '<tbody/>' );
 	$.each( results, function( uid, res ) {
-		if ( uid == '000000' ) return; /* hack to exclude the teacher */
+		console.log(res);
+		if ( res.signature.uid === '000000' ) return; /* hack to exclude the test user */
 		var tr = $( '<tr data-uid="'+ uid + '"/>');
 		tr.append( $( '<td/>').text( res.signature.uid ) );
 		tr.append( $( '<td/>').text( res.signature.info ) );
