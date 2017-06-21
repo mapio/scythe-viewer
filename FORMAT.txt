@@ -4,8 +4,7 @@ RESULT := {
     'signature': {
         # these fields are the "signature" collected by "Tristo mietitore"
         'uid': <UID>,
-        'info': <INFO>,
-        'ip': <EXTRA>
+        'info': <INFO>
     },
     'exercises': [ ( <EXERCISE> )+ ]
 }

@@ -5,7 +5,7 @@ var results = [],
 	exercise_names = [], /* filled by from_json */
 	interactive = false;  /* filled at startup */
 
-var $info, $uid, $exercise, $case, $ip, $identification,
+var $info, $uid, $exercise, $case, $identification,
 	$evaluation, $score, $note, $sources, $cases, $summary,
 	$sources_tab, $cases_tab, $summary_tab;
 
@@ -108,7 +108,6 @@ function update_exercise( delta ) {
 	$identification.text( [
 		results[ current.uid ].signature.uid,
 		results[ current.uid ].signature.info,
-		results[ current.uid ].signature.ip,
 		cur.name ].join()
 	);
 	$exercise.text( cur.name );
@@ -146,7 +145,6 @@ function update_uid( delta ) {
 	if ( cur == null ) return;
 	$uid.text( cur.signature.uid );
 	$info.val( cur.signature.info );
-	$ip.text( cur.signature.ip );
 	$( 'tbody tr' ).removeClass( 'info' );
 	$( 'tr[data-uid="' + current.uid + '"]' ).addClass( 'info' );
 	update_exercise();
@@ -278,7 +276,6 @@ $( function() {
 	$uid = $( '#uid' );
 	$exercise = $( '#exercise' );
 	$case = $( '#case' );
-	$ip = $( '#ip' );
 	$identification = $( '#identification' );
 
 	$evaluation = $( '#evaluation' );
