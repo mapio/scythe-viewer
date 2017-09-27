@@ -1,6 +1,7 @@
 #!/bin/bash
 
 mkdir -p .cache
+mkdir -p release
 cd .cache
 if [ -d zerve ]; then
     ( cd zerve && git pull )
