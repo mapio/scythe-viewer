@@ -20,8 +20,6 @@
 		<script src="js/bootstrap.js"></script>
 		<script src="js/highlight.js"></script>
 		<script src="js/mousetrap.js"></script>
-		<script src="js/sha1.js"></script>
-		<script src="js/filesaver.js"></script>
 		<script src="js/jquery.tablesorter.js"></script>
 		<script src="js/jquery.tablesorter.widgets.js"></script>
 		<script src="cuv.js"></script>
@@ -75,16 +73,6 @@
 		</ul>
 		<div class="alert alert-info">Press <kbd>h</kbd> for a list of shortcuts.</div>
 
-		<hr/>
-
-		<div class="interactive">
-		<div class="fileupload fileupload-new" data-provides="fileupload">
-			<span class="btn btn-file"><span class="fileupload-new">Load results</span><input type="file" id="result_file" /></span>
-		</div>
-		<span class="uneditable-input" id="result_sha"></span>
-		<button class="btn" type="button" onclick="dowlonad_evaluations()">Download evaluations</button>
-		</div>
-
 	</div><!-- sidebar -->
 
 	<div class="span10">
@@ -96,22 +84,6 @@
 			</div>
 
 			<div class="tab-pane" id="sources_tab">
-				<div class="well" id="evaluation" data-uid="" data-exercise="">
-				<form class="form-horizontal"><fieldset>
-					<legend>Evaluation</legend>
-						<div class="control-group" id="printinfo">
-							<label class="control-label">UID, Info, Exercise</label>
-							<div class="controls"><span id="identification" class="uneditable-input input-xxlarge"></span></div>
-						</div>
-						<div class="control-group">
-							<label class="control-label">Score</label>
-							<div class="controls"><input id="score" type="number" step="any" class="input-mini" onchange="store_evaluation( this )"></div>
-						</div>
-						<div class="control-group">
-							<label class="control-label">Note</label>
-							<div class="controls"><textarea id="note" class="input-xxlarge" onchange="store_evaluation( this )"></textarea></div>
-						</div>
-				</fieldset></form></div>
 				<div id="sources"></div>
 			</div>
 

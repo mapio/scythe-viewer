@@ -1,12 +1,9 @@
 var results = [],
-	results_signaure = null,
 	infos = [],
-	evaluations = [],
-	exercise_names = [], /* filled by from_json */
-	interactive = false;  /* filled at startup */
+	exercise_names = []; /* filled by from_json */
 
-var $info, $uid, $exercise, $case, $identification,
-	$evaluation, $score, $note, $sources, $cases, $summary,
+var $info, $uid, $exercise, $case,
+	$score, $note, $sources, $cases, $summary,
 	$sources_tab, $cases_tab, $summary_tab;
 
 var MAX_NUM_LINES = 50;
@@ -28,32 +25,12 @@ Mousetrap.bind( 'c', function() { update_case( +1 ); } );
 Mousetrap.bind( 'h', function() { $( '#shortcuts' ).modal( 'toggle' ); } );
 Mousetrap.bind( 'r', function() { $( 'div.progress' ).toggle(); $( 'span.badges' ).toggle(); } );
 
-if ( interactive ) Mousetrap.bind( 't', function() { $( 'span.badge' ).toggle(); $( 'input.evals' ).toggle(); } );
-
 function input_ue( e ) {
 	var $e = $( e );
 	return {
 		'uid': $e.closest( 'tr' ).data( 'uid' ),
 		'exercise': $e.closest( 'td' ).data( 'exercise' )
 	};
-}
-
-function dowlonad_evaluations() {
-	if ( results_signaure == null ) return;
-	evaluations_blob = new Blob( [ JSON.stringify( evaluations ) ], { type: 'application/json' } );
-	saveAs( evaluations_blob, results_signaure + '.json' );
-}
-
-function store_evaluation( elem ) {
-	var $elem = $( elem );
-	var ue = $elem.parent().is( 'div' ) ? $evaluation.data() : input_ue( elem );
-	if ( $elem.is( 'input' ) ) {
-		var val = elem.valueAsNumber;
-		if ( isNaN( val ) ) $elem.val( evaluations[ ue.uid ][ ue.exercise ].score );
-		else evaluations[ ue.uid ][ ue.exercise ].score = val;
-	} else
-		evaluations[ ue.uid ][ ue.exercise ].note = $elem.val();
-	localStorage[ results_signaure ] = JSON.stringify( evaluations );
 }
 
 function update_case( delta ) {
@@ -105,11 +82,6 @@ function update_exercise( delta ) {
 		else return;
 	}
 	cur = exercises[ current.exercise ];
-	$identification.text( [
-		results[ current.uid ].signature.uid,
-		results[ current.uid ].signature.info,
-		cur.name ].join()
-	);
 	$exercise.text( cur.name );
 	var res = [];
 	$.each( cur.sources, function( idx, source ) {
@@ -120,14 +92,9 @@ function update_exercise( delta ) {
 		) );
 	} );
 	if ( res.length > 0 ) {
-		$score.val( evaluations[ current.uid ][ current.exercise ].score );
-		$note.val( evaluations[ current.uid ][ current.exercise ].note );
-		$evaluation.data( { 'uid': current.uid, 'exercise': current.exercise } );
-		if ( interactive ) $evaluation.show(); else $evaluation.hide();
 		$sources.html( '' );
 		$.each( res, function( i, s ) { $sources.append( s ); } );
 	} else {
-		$evaluation.hide();
 		$sources.html( '<div class="alert alert-error">no source file found</div>' );
 	}
 	current.case = 0;
@@ -151,10 +118,6 @@ function update_uid( delta ) {
 }
 
 function update_summary() {
-	$( '#summary_tab input' ).each( function( i, e ) {
-		var ue = input_ue( e );
-		$( e ).val( evaluations[ ue.uid ][ ue.exercise ].score );
-	} );
 	$summary_tab.tab( 'show' );
 }
 
@@ -163,28 +126,18 @@ function from_json( data ) {
 	if ( typeof data === 'object' ) {
 		results = data;
 	} else {
-		var sha = new jsSHA( data, 'TEXT' );
-		results_signaure =  sha.getHash( 'SHA-1', 'HEX' );
-		$( '#result_sha' ).text( results_signaure );
 		results = JSON.parse( data );
 	}
 
 	infos.splice( 0, infos.length ); /* mutate the object since it is bound to typeahead */
-	evaluations = [];
 	exercise_names = {};
 	$.each( results, function( ri, res ) {
 		infos.push( res.signature.info );
-		evaluations[ ri ] = [];
 		$.each( res.exercises, function( ei, ex ) {
 			exercise_names[ ex.name ] = true;
-			evaluations[ ri ].push( { score: 0, note: '' } );
 		} );
 	} );
 	exercise_names = Object.keys( exercise_names ).sort();
-
-	var json_evaluations = localStorage[ results_signaure ];
-	if ( typeof json_evaluations !== 'undefined' )
-		evaluations = JSON.parse( json_evaluations );
 
 	setup_summary();
 	current = { uid: 0, exercise: 0 };
@@ -203,7 +156,6 @@ function setup_summary() {
 
 	var tbody = $( '<tbody/>' );
 	$.each( results, function( uid, res ) {
-		console.log(res);
 		if ( res.signature.uid === '000000' ) return; /* hack to exclude the test user */
 		var tr = $( '<tr data-uid="'+ uid + '"/>');
 		tr.append( $( '<td/>').text( res.signature.uid ) );
@@ -237,10 +189,6 @@ function setup_summary() {
 				return badge;
 			}
 			var td = $( '<td data-exercise="' + ex + '"/>' );
-			if ( interactive && sn[ 'sources' ] > 0 ) {
-				var input = $( '<input type="number" step="any" class="span6 evals" value="' + evaluations[ uid ][ ex ].score + '" style="margin: 0 4pt 0 0;" onchange="store_evaluation( this )"/>' );
-				badges.append( input );
-			}
 			var source_badge = _badge( 'sources' );
 			if ( source_badge !== null ) source_badge.click( function( e ) {
 				current = input_ue( e.target );
@@ -276,7 +224,6 @@ $( function() {
 	$uid = $( '#uid' );
 	$exercise = $( '#exercise' );
 	$case = $( '#case' );
-	$identification = $( '#identification' );
 
 	$evaluation = $( '#evaluation' );
 	$score = $( '#score' );
@@ -318,25 +265,12 @@ $( function() {
 		type: 'numeric'
 	} );
 
-	$( '#result_file' ).on( 'change', function( e ) {
-		var file = e.target.files[ 0 ];
-		var reader = new FileReader();
-		reader.onload = function( e ) {
-			from_json( e.target.result );
-		};
-		reader.readAsText( file );
-		$( 'div.fileupload' ).fileupload( 'clear' );
-	} );
 
 	$.getJSON( '../results.json', function( data ) {
-		interactive = false;
 		from_json( data );
-		$( '.interactive' ).hide();
 		console.log( 'loaded results.json' );
 	} ).fail( function() {
-		interactive = true;
-		$( '.interactive' ).show();
-		console.log( 'interactive mode' );
+		console.log( 'missing data' );
 	} );
 // nope
 } );
